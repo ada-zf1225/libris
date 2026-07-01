@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  hygiene:
+    name: Repo hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for merge conflict markers
+        run: |
+          ! grep -rEl '^(<<<<<<<|=======$|>>>>>>>)' --exclude-dir=.git --exclude-dir=node_modules .
+      - name: Check for committed secrets (heuristic)
+        run: |
+          ! grep -rEln '(password|secret|api[_-]?key)\s*[:=]\s*["'"'"'][^"'"'"']{8,}' \
+            --include='*.yml' --include='*.yaml' --include='*.properties' \
+            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github . \
+            | grep -v '.env.example' || true
