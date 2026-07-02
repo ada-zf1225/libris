@@ -49,7 +49,7 @@ class AuthFlowTests {
         Session session = new Session();
         ResponseEntity<String> login = login("admin", "LibrisAdmin#2026", session);
         assertThat(login.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(login.getBody()).contains("\"role\":\"ADMIN\"");
+        assertThat(login.getBody()).contains("\"role\":\"SUPER_ADMIN\"");
 
         ResponseEntity<String> me = rest.exchange("/api/auth/me", HttpMethod.GET,
                 new HttpEntity<>(session.headers()), String.class);
