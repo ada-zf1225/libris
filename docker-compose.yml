@@ -1,0 +1,29 @@
+# Development stack: database + mail catcher.
+# The full application stack (backend + frontend images) lands with the M5 release.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: libris-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-libris}
+      POSTGRES_USER: ${DB_USER:-libris}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-libris_dev}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - libris-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-libris} -d ${DB_NAME:-libris}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: libris-mailhog
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
+
+volumes:
+  libris-pgdata:

@@ -5,12 +5,16 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   hygiene:
     name: Repo hygiene
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check for merge conflict markers
         run: |
           ! grep -rEl '^(<<<<<<<|=======$|>>>>>>>)' --exclude-dir=.git --exclude-dir=node_modules .
@@ -20,3 +24,42 @@ jobs:
             --include='*.yml' --include='*.yaml' --include='*.properties' \
             --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github . \
             | grep -v '.env.example' || true
+
+  backend:
+    name: Backend · mvn verify
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build and test (Testcontainers)
+        run: ./mvnw -B verify
+
+  frontend:
+    name: Frontend · build & lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Type-check and build
+        run: pnpm build
