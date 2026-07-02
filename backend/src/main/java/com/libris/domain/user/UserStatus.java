@@ -1,11 +1,12 @@
 package com.libris.domain.user;
 
 /**
- * Account-level circulation status. BLOCKED prevents borrowing, renewing and
- * placing holds, but never prevents signing in (patrons must still be able to
- * see and settle their fines).
+ * BLOCKED suspends circulation privileges but still allows sign-in (patrons
+ * must be able to see and settle fines). DISABLED locks the account entirely
+ * (used for departed staff).
  */
 public enum UserStatus {
     ACTIVE,
-    BLOCKED
+    BLOCKED,
+    DISABLED
 }

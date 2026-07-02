@@ -1,6 +1,11 @@
 package com.libris.domain.user;
 
 public enum Role {
-    ADMIN,
-    READER
+    SUPER_ADMIN,
+    LIBRARIAN,
+    READER;
+
+    public boolean isStaff() {
+        return this != READER;
+    }
 }

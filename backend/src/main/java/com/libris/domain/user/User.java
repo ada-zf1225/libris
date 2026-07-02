@@ -47,6 +47,18 @@ public class User {
     @Column(name = "preferred_locale", nullable = false, length = 8)
     private String preferredLocale = "zh-CN";
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified;
+
+    @Column(name = "mfa_enabled", nullable = false)
+    private boolean mfaEnabled;
+
+    @Column(name = "totp_secret", length = 64)
+    private String totpSecret;
+
+    @Column(name = "webauthn_handle", length = 64)
+    private String webauthnHandle;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

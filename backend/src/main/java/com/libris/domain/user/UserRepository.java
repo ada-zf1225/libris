@@ -9,5 +9,9 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Optional<User> findByUsername(String username);
 
+    Optional<User> findByEmailIgnoreCase(String email);
+
+    Optional<User> findByWebauthnHandle(String webauthnHandle);
+
     boolean existsByUsername(String username);
 }
