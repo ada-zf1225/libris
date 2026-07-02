@@ -17,6 +17,8 @@
 
 `File → Open` 选择仓库根目录,等待右下角 Maven 导入完成(首次会下载依赖并建立索引,几分钟)。导入结束后左侧应显示 `backend [libris-backend]` 模块。
 
+> **首次打开若代码大面积爆红**(所有 `import`、`@Entity`、`@Getter` 等标红):这是 IDEA 尚未把 Maven 依赖链接进模块,并非代码错误。打开右侧 **Maven** 工具窗(或 `View → Tool Windows → Maven`),点最左的 **Reload All Maven Projects**(循环箭头)即可;等依赖解析完成后红标消失,只剩正常的黄色代码建议。命令行 `./mvnw compile` 始终能编译,可佐证代码本身无误。
+
 ## 运行配置 · Run configurations
 
 右上角运行配置下拉里已有四个(`.run/` 已随仓库提供):
