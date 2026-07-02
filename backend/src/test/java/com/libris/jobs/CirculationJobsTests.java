@@ -3,6 +3,8 @@ package com.libris.jobs;
 import com.libris.TestcontainersConfiguration;
 import com.libris.domain.catalog.BookCopyRepository;
 import com.libris.domain.catalog.CopyStatus;
+import com.libris.domain.circulation.Fine;
+import com.libris.domain.circulation.FineRepository;
 import com.libris.domain.circulation.HoldRepository;
 import com.libris.domain.circulation.HoldStatus;
 import com.libris.domain.circulation.Loan;
@@ -36,9 +38,23 @@ class CirculationJobsTests {
     @Autowired UserRepository users;
     @Autowired BookCopyRepository copies;
     @Autowired NotificationRepository notifications;
+    @Autowired FineRepository fines;
 
     private Long id(String username) {
         return users.findByUsername(username).orElseThrow().getId();
+    }
+
+    /**
+     * Test classes share one database; earlier classes may leave unpaid fines
+     * (e.g. a lost-item charge) that would trip the real-time fine block.
+     * Settle them so this class only observes its own state.
+     */
+    private void settleFines(Long readerId) {
+        for (Fine fine : fines.findByReaderIdAndStatus(readerId, Fine.Status.UNPAID)) {
+            fine.setStatus(Fine.Status.PAID);
+            fine.setPaidAt(Instant.now());
+            fines.save(fine);
+        }
     }
 
     private long notificationCount(Long userId, String type) {
@@ -50,6 +66,7 @@ class CirculationJobsTests {
     void dueSoonAndOverdueJobsNotifyAndAutoBlock() {
         Long admin = id("admin");
         Long reader = id("wangxiaowei"); // teacher, block threshold 3 overdue
+        settleFines(reader);
 
         // one loan due tomorrow → courtesy notice
         var soonLoan = circulation.checkout("LB000045", reader, admin); // 平凡的世界 c1
@@ -81,6 +98,9 @@ class CirculationJobsTests {
         Long zhang = id("zhanghua");
         Long ming = id("zhangminghua");
         Long yi = id("liyichen");
+        settleFines(zhang);
+        settleFines(ming);
+        settleFines(yi);
 
         // book 24 白夜行: copies LB000047? no — (24-1)*2+1 = 47 taken above… use 解忧杂货店 book 25 → 49,50 also used.
         // 小王子 book 29 → barcodes LB000057/58
