@@ -25,4 +25,10 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             where l.readerId = :readerId and l.returnedAt is null and l.dueAt < :now
             """)
     long countOverdue(@Param("readerId") Long readerId, @Param("now") Instant now);
+
+    @Query("select l from Loan l where l.returnedAt is null and l.dueAt between :from and :to")
+    List<Loan> findDueBetween(@Param("from") Instant from, @Param("to") Instant to);
+
+    @Query("select l from Loan l where l.returnedAt is null and l.dueAt < :now")
+    List<Loan> findOverdue(@Param("now") Instant now);
 }

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -29,6 +30,7 @@ async function handleCommand(command: string) {
         <nav class="actions">
           <router-link :to="{ name: 'search' }" class="nav-link">{{ t('nav.discovery') }}</router-link>
           <router-link :to="{ name: 'my-library' }" class="nav-link">{{ t('nav.myLibrary') }}</router-link>
+          <NotificationBell class="on-dark" />
           <LanguageSwitcher class="on-dark" />
           <el-dropdown v-if="auth.user" trigger="click" @command="handleCommand">
             <span class="user-trigger">

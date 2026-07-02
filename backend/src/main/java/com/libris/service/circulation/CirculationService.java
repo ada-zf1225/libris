@@ -40,6 +40,7 @@ public class CirculationService {
     private final UserRepository users;
     private final ReaderProfileRepository profiles;
     private final CirculationLogRepository logs;
+    private final com.libris.service.notify.NotificationService notify;
 
     // ---------- checkout ----------
 
@@ -132,6 +133,9 @@ public class CirculationService {
             copy.setStatus(CopyStatus.ON_HOLD_SHELF);
             holdReaderName = users.findById(hold.getReaderId()).map(User::getDisplayName).orElse("?");
             routing = Routing.TO_HOLD_SHELF;
+            notify.notifyUser(hold.getReaderId(), "HOLD_READY", "notice.holdReady",
+                    book.getTitle(),
+                    hold.getExpiresAt().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
         } else {
             copy.setStatus(CopyStatus.IN_LIBRARY);
             routing = Routing.TO_SHELF;
