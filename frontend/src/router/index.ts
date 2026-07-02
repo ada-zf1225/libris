@@ -19,6 +19,21 @@ const router = createRouter({
           name: 'home',
           component: () => import('@/views/reader/HomeView.vue'),
         },
+        {
+          path: 'search',
+          name: 'search',
+          component: () => import('@/views/reader/SearchView.vue'),
+        },
+        {
+          path: 'books/:id(\\d+)',
+          name: 'book-detail',
+          component: () => import('@/views/reader/BookDetailView.vue'),
+        },
+        {
+          path: 'my',
+          name: 'my-library',
+          component: () => import('@/views/reader/MyLibraryView.vue'),
+        },
       ],
     },
     {
@@ -55,6 +70,11 @@ const router = createRouter({
           path: 'logs',
           name: 'admin-logs',
           component: () => import('@/views/admin/LogsView.vue'),
+        },
+        {
+          path: 'suggestions',
+          name: 'admin-suggestions',
+          component: () => import('@/views/admin/SuggestionsView.vue'),
         },
       ],
     },

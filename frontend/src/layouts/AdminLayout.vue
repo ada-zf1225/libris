@@ -58,7 +58,7 @@ async function handleCommand(command: string) {
           <el-icon><SetUp /></el-icon>
           <span>{{ t('nav.admin.policies') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/suggestions" disabled>
+        <el-menu-item index="/admin/suggestions">
           <el-icon><ShoppingCart /></el-icon>
           <span>{{ t('nav.admin.suggestions') }}</span>
         </el-menu-item>
