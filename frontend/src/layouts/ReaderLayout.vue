@@ -27,6 +27,8 @@ async function handleCommand(command: string) {
         </router-link>
 
         <nav class="actions">
+          <router-link :to="{ name: 'search' }" class="nav-link">{{ t('nav.discovery') }}</router-link>
+          <router-link :to="{ name: 'my-library' }" class="nav-link">{{ t('nav.myLibrary') }}</router-link>
           <LanguageSwitcher class="on-dark" />
           <el-dropdown v-if="auth.user" trigger="click" @command="handleCommand">
             <span class="user-trigger">
@@ -106,6 +108,17 @@ async function handleCommand(command: string) {
 }
 
 .on-dark {
+  color: #fff;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-link:hover,
+.nav-link.router-link-active {
   color: #fff;
 }
 

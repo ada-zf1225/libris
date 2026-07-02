@@ -19,6 +19,8 @@ public interface HoldRepository extends JpaRepository<Hold, Long> {
 
     long countByBookIdAndStatus(Long bookId, HoldStatus status);
 
+    long countByBookIdAndStatusAndQueuedAtBefore(Long bookId, HoldStatus status, java.time.Instant queuedAt);
+
     Optional<Hold> findByReadyCopyIdAndStatus(Long copyId, HoldStatus status);
 
     /** Oldest queued hold for a title — locked so two returns can't promote the same hold twice. */
