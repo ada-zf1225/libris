@@ -27,6 +27,7 @@ public class AdminSuggestionController {
 
     private final PurchaseSuggestionRepository suggestions;
     private final UserRepository users;
+    private final com.libris.service.notify.NotificationService notify;
 
     public record HandleRequest(@Size(max = 512) String reply) {}
 
@@ -75,5 +76,8 @@ public class AdminSuggestionController {
         s.setHandledBy(operator.getId());
         s.setHandledAt(Instant.now());
         s.setReply(body == null ? null : body.reply());
+        notify.notifyUser(s.getReaderId(), "SUGGESTION", "notice.suggestionHandled",
+                s.getTitle(), status == PurchaseSuggestion.Status.APPROVED ? "采纳 / approved" : "婉拒 / declined",
+                s.getReply() == null ? "" : s.getReply());
     }
 }

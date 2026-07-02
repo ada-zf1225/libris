@@ -23,6 +23,9 @@ public interface HoldRepository extends JpaRepository<Hold, Long> {
 
     Optional<Hold> findByReadyCopyIdAndStatus(Long copyId, HoldStatus status);
 
+    @Query("select h from Hold h where h.status = 'READY' and h.expiresAt < :now")
+    List<Hold> findExpiredReady(@Param("now") java.time.Instant now);
+
     /** Oldest queued hold for a title — locked so two returns can't promote the same hold twice. */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
