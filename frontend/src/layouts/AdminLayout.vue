@@ -42,19 +42,19 @@ async function handleCommand(command: string) {
           <el-icon><DataAnalysis /></el-icon>
           <span>{{ t('nav.admin.dashboard') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/circulation" disabled>
+        <el-menu-item index="/admin/circulation">
           <el-icon><Refresh /></el-icon>
           <span>{{ t('nav.admin.circulation') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/books" disabled>
+        <el-menu-item index="/admin/books">
           <el-icon><Collection /></el-icon>
           <span>{{ t('nav.admin.books') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/readers" disabled>
+        <el-menu-item index="/admin/readers">
           <el-icon><User /></el-icon>
           <span>{{ t('nav.admin.readers') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/policies" disabled>
+        <el-menu-item index="/admin/policies">
           <el-icon><SetUp /></el-icon>
           <span>{{ t('nav.admin.policies') }}</span>
         </el-menu-item>
@@ -62,7 +62,7 @@ async function handleCommand(command: string) {
           <el-icon><ShoppingCart /></el-icon>
           <span>{{ t('nav.admin.suggestions') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/logs" disabled>
+        <el-menu-item index="/admin/logs">
           <el-icon><Document /></el-icon>
           <span>{{ t('nav.admin.logs') }}</span>
         </el-menu-item>

@@ -31,6 +31,31 @@ const router = createRouter({
           name: 'admin-dashboard',
           component: () => import('@/views/admin/DashboardView.vue'),
         },
+        {
+          path: 'circulation',
+          name: 'admin-circulation',
+          component: () => import('@/views/admin/CirculationDeskView.vue'),
+        },
+        {
+          path: 'books',
+          name: 'admin-books',
+          component: () => import('@/views/admin/BooksView.vue'),
+        },
+        {
+          path: 'readers',
+          name: 'admin-readers',
+          component: () => import('@/views/admin/ReadersView.vue'),
+        },
+        {
+          path: 'policies',
+          name: 'admin-policies',
+          component: () => import('@/views/admin/PoliciesView.vue'),
+        },
+        {
+          path: 'logs',
+          name: 'admin-logs',
+          component: () => import('@/views/admin/LogsView.vue'),
+        },
       ],
     },
     {
