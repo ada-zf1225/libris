@@ -16,6 +16,7 @@ import {
 import { useAuthStore } from '@/stores/auth'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import NotificationBell from '@/components/NotificationBell.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -79,6 +80,7 @@ async function handleCommand(command: string) {
       <el-header class="admin-header">
         <div />
         <div class="header-actions">
+          <ThemeToggle />
           <NotificationBell />
           <LanguageSwitcher />
           <el-dropdown v-if="auth.user" trigger="click" @command="handleCommand">
@@ -95,7 +97,11 @@ async function handleCommand(command: string) {
         </div>
       </el-header>
       <el-main class="admin-main">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <transition name="page" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -147,8 +153,8 @@ async function handleCommand(command: string) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid #e5e8ec;
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--libris-card-border);
 }
 
 .header-actions {

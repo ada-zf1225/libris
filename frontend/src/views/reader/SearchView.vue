@@ -133,7 +133,7 @@ const hasFilter = computed(
           :prefix-icon="Search"
           size="large"
           clearable
-          class="search-box"
+          class="search-box glow-focus"
           @select="newSearch"
           @keyup.enter="newSearch"
           @clear="newSearch"
@@ -220,14 +220,19 @@ const hasFilter = computed(
             </el-select>
           </div>
 
-          <div v-loading="loading" class="result-list">
-            <template v-if="tab === 'books'">
+          <div class="result-list">
+            <template v-if="loading">
+              <el-card v-for="i in 4" :key="i" shadow="never" class="skeleton-card">
+                <el-skeleton animated :rows="2" />
+              </el-card>
+            </template>
+            <template v-else-if="tab === 'books'">
               <el-empty v-if="!loading && books.length === 0" :description="t('search.noResults')" />
               <router-link
                 v-for="hit in books"
                 :key="hit.id"
                 :to="{ name: 'book-detail', params: { id: hit.id } }"
-                class="hit-card"
+                class="hit-card stagger-in"
               >
                 <BookCover :src="hit.coverUrl" :title="hit.title" class="hit-cover" />
                 <div class="hit-body">
@@ -248,7 +253,7 @@ const hasFilter = computed(
 
             <template v-else>
               <el-empty v-if="!loading && papers.length === 0" :description="t('search.noResults')" />
-              <div v-for="p in papers" :key="p.id" class="hit-card paper-card">
+              <div v-for="p in papers" :key="p.id" class="hit-card paper-card stagger-in">
                 <div class="hit-body">
                   <h3 class="hit-title">{{ p.title }}</h3>
                   <p class="hit-meta">{{ p.authors }}</p>
@@ -386,14 +391,19 @@ const hasFilter = computed(
 .hit-card {
   display: flex;
   gap: 16px;
-  background: #fff;
-  border: 1px solid #e8ebf0;
+  background: var(--el-bg-color);
+  border: 1px solid var(--libris-card-border);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 12px;
   text-decoration: none;
   color: inherit;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.skeleton-card {
+  margin-bottom: 12px;
+  border-radius: 10px;
 }
 
 .hit-card:hover {

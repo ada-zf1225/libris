@@ -11,6 +11,7 @@ import {
 } from '@element-plus/icons-vue'
 import { my, type Overview, type HoldView, type FavoriteView, type SuggestionView } from '@/api/my'
 import SecurityPanel from '@/components/SecurityPanel.vue'
+import StatNumber from '@/components/StatNumber.vue'
 import type { LoanView, FineView } from '@/api/admin'
 import { apiChangePassword } from '@/api/auth'
 import { errorMessage } from '@/api/http'
@@ -157,29 +158,29 @@ const holdTagType = (status: HoldView['status']) =>
       <!-- overview -->
       <el-tab-pane :label="t('myLib.overview')" name="overview">
         <div v-if="overview" class="stat-grid">
-          <el-card shadow="never" class="stat-card">
+          <el-card shadow="never" class="stat-card stagger-in">
             <el-icon class="stat-icon"><Reading /></el-icon>
-            <div class="stat-num">{{ overview.activeLoans }}</div>
+            <div class="stat-num"><StatNumber :value="overview.activeLoans" /></div>
             <div class="stat-label">{{ t('myLib.stat.activeLoans') }}</div>
           </el-card>
-          <el-card shadow="never" class="stat-card" :class="{ warn: overview.overdue > 0 }">
+          <el-card shadow="never" class="stat-card stagger-in" :class="{ warn: overview.overdue > 0 }">
             <el-icon class="stat-icon"><AlarmClock /></el-icon>
-            <div class="stat-num">{{ overview.overdue }}</div>
+            <div class="stat-num"><StatNumber :value="overview.overdue" /></div>
             <div class="stat-label">{{ t('myLib.stat.overdue') }}</div>
           </el-card>
-          <el-card shadow="never" class="stat-card">
+          <el-card shadow="never" class="stat-card stagger-in">
             <el-icon class="stat-icon"><CollectionTag /></el-icon>
-            <div class="stat-num">{{ overview.activeHolds }}</div>
+            <div class="stat-num"><StatNumber :value="overview.activeHolds" /></div>
             <div class="stat-label">{{ t('myLib.stat.holds') }}</div>
           </el-card>
-          <el-card shadow="never" class="stat-card" :class="{ warn: overview.unpaidFineCents > 0 }">
+          <el-card shadow="never" class="stat-card stagger-in" :class="{ warn: overview.unpaidFineCents > 0 }">
             <el-icon class="stat-icon"><Money /></el-icon>
-            <div class="stat-num">{{ money(overview.unpaidFineCents) }}</div>
+            <div class="stat-num"><StatNumber :value="overview.unpaidFineCents" money /></div>
             <div class="stat-label">{{ t('myLib.stat.unpaidFines') }}</div>
           </el-card>
-          <el-card shadow="never" class="stat-card">
+          <el-card shadow="never" class="stat-card stagger-in">
             <el-icon class="stat-icon"><Star /></el-icon>
-            <div class="stat-num">{{ overview.favorites }}</div>
+            <div class="stat-num"><StatNumber :value="overview.favorites" /></div>
             <div class="stat-label">{{ t('myLib.stat.favorites') }}</div>
           </el-card>
         </div>

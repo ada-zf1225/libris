@@ -4,8 +4,9 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import type { EChartsOption } from 'echarts'
 import { http, errorMessage } from '@/api/http'
-import { money } from '@/utils/format'
+
 import EChart from '@/components/EChart.vue'
+import StatNumber from '@/components/StatNumber.vue'
 
 interface Dashboard {
   totals: {
@@ -97,35 +98,35 @@ const shareOption = computed<EChartsOption>(() => ({
 <template>
   <div v-if="data">
     <div class="stat-grid">
-      <el-card shadow="never" class="stat-card">
-        <div class="stat-num">{{ data.totals.books }}</div>
+      <el-card shadow="never" class="stat-card stagger-in">
+        <div class="stat-num"><StatNumber :value="data.totals.books" /></div>
         <div class="stat-label">{{ t('dash.books') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card">
-        <div class="stat-num">{{ data.totals.copies }}</div>
+      <el-card shadow="never" class="stat-card stagger-in">
+        <div class="stat-num"><StatNumber :value="data.totals.copies" /></div>
         <div class="stat-label">{{ t('dash.copies') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card">
-        <div class="stat-num">{{ data.totals.readers }}</div>
+      <el-card shadow="never" class="stat-card stagger-in">
+        <div class="stat-num"><StatNumber :value="data.totals.readers" /></div>
         <div class="stat-label">{{ t('dash.readers') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card">
-        <div class="stat-num">{{ data.totals.activeLoans }}</div>
+      <el-card shadow="never" class="stat-card stagger-in">
+        <div class="stat-num"><StatNumber :value="data.totals.activeLoans" /></div>
         <div class="stat-label">{{ t('dash.activeLoans') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card" :class="{ warn: data.totals.overdueLoans > 0 }">
-        <div class="stat-num">{{ data.totals.overdueLoans }}</div>
+      <el-card shadow="never" class="stat-card stagger-in" :class="{ warn: data.totals.overdueLoans > 0 }">
+        <div class="stat-num"><StatNumber :value="data.totals.overdueLoans" /></div>
         <div class="stat-label">{{ t('dash.overdueLoans') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card">
-        <div class="stat-num">{{ data.totals.readyHolds }}</div>
+      <el-card shadow="never" class="stat-card stagger-in">
+        <div class="stat-num"><StatNumber :value="data.totals.readyHolds" /></div>
         <div class="stat-label">{{ t('dash.readyHolds') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card" :class="{ warn: data.totals.unpaidFineCents > 0 }">
-        <div class="stat-num">{{ money(data.totals.unpaidFineCents) }}</div>
+      <el-card shadow="never" class="stat-card stagger-in" :class="{ warn: data.totals.unpaidFineCents > 0 }">
+        <div class="stat-num"><StatNumber :value="data.totals.unpaidFineCents" money /></div>
         <div class="stat-label">{{ t('dash.unpaidFines') }}</div>
       </el-card>
-      <el-card shadow="never" class="stat-card">
+      <el-card shadow="never" class="stat-card stagger-in">
         <div class="stat-num">{{ data.overdueRate }}%</div>
         <div class="stat-label">{{ t('dash.overdueRate') }}</div>
       </el-card>

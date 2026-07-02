@@ -60,6 +60,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SecurityPanel: typeof import('./components/SecurityPanel.vue')['default']
+    StatNumber: typeof import('./components/StatNumber.vue')['default']
+    ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
