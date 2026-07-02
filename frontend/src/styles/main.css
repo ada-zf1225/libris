@@ -1,0 +1,40 @@
+:root {
+  /* Imperial-inspired deep blue as the brand primary */
+  --libris-primary: #003e74;
+  --libris-primary-light: #1f5a94;
+  --libris-accent: #d4003b;
+  --libris-bg: #f5f7fa;
+
+  --el-color-primary: var(--libris-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    sans-serif;
+  background: var(--libris-bg);
+  color: #1f2329;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
