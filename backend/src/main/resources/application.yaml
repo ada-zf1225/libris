@@ -46,6 +46,11 @@ management:
     health:
       probes:
         enabled: true
+  health:
+    # Mail is a best-effort notification channel; a down SMTP relay (e.g. running
+    # the backend without MailHog) must not drag the whole app to DOWN.
+    mail:
+      enabled: false
 
 springdoc:
   api-docs:
