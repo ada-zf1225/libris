@@ -1,5 +1,7 @@
-# Development stack: database + mail catcher.
-# The full application stack (backend + frontend images) lands with the M5 release.
+# One-command full stack:  docker compose up --build
+# App:      http://localhost:8081      (nginx → SPA + /api proxy)
+# API only: http://localhost:8080      (Spring Boot, dev profile)
+# MailHog:  http://localhost:8025      (captured notification emails)
 services:
   postgres:
     image: postgres:16-alpine
@@ -24,6 +26,33 @@ services:
     ports:
       - '1025:1025' # SMTP
       - '8025:8025' # Web UI
+
+  backend:
+    build: ./backend
+    container_name: libris-backend
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-libris}
+      DB_USER: ${DB_USER:-libris}
+      DB_PASSWORD: ${DB_PASSWORD:-libris_dev}
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: libris-frontend
+    ports:
+      - '8081:80'
+    depends_on:
+      - backend
 
 volumes:
   libris-pgdata:
