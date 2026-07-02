@@ -11,6 +11,24 @@ const router = createRouter({
       meta: { public: true },
     },
     {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/views/auth/ForgotPasswordView.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('@/views/auth/ResetPasswordView.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('@/views/auth/VerifyEmailView.vue'),
+      meta: { public: true },
+    },
+    {
       path: '/',
       component: () => import('@/layouts/ReaderLayout.vue'),
       children: [
@@ -76,6 +94,12 @@ const router = createRouter({
           name: 'admin-suggestions',
           component: () => import('@/views/admin/SuggestionsView.vue'),
         },
+        {
+          path: 'staff',
+          name: 'admin-staff',
+          component: () => import('@/views/admin/StaffView.vue'),
+          meta: { superAdminOnly: true },
+        },
       ],
     },
     {
@@ -93,15 +117,18 @@ router.beforeEach(async (to) => {
 
   if (to.meta.public) {
     if (to.name === 'login' && auth.isAuthenticated) {
-      return auth.isAdmin ? { name: 'admin-dashboard' } : { name: 'home' }
+      return auth.isStaff ? { name: "admin-dashboard" } : { name: "home" }
     }
     return true
   }
   if (!auth.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
-  if (to.meta.adminOnly && !auth.isAdmin) {
+  if (to.meta.adminOnly && !auth.isStaff) {
     return { name: 'home' }
+  }
+  if (to.meta.superAdminOnly && !auth.isSuperAdmin) {
+    return { name: 'admin-dashboard' }
   }
   return true
 })

@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_MANAGE_CATALOG')")
 @RestController
 @RequestMapping("/api/admin/books")
 @RequiredArgsConstructor

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.Map;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_VIEW_LOGS')")
 @RestController
 @RequestMapping("/api/admin/circulation-logs")
 @RequiredArgsConstructor

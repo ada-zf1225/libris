@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_VIEW_STATS')")
 @RestController
 @RequestMapping("/api/admin/stats")
 @RequiredArgsConstructor

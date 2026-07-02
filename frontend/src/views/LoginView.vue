@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { User, Lock } from '@element-plus/icons-vue'
+import { User, Lock, Key } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { errorMessage } from '@/api/http'
+import { passkeys } from '@/api/security'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const { t } = useI18n()
@@ -17,25 +18,68 @@ const formRef = ref<FormInstance>()
 const loading = ref(false)
 const form = reactive({ username: '', password: '' })
 
+const step = ref<'password' | 'mfa'>('password')
+const mfaCode = ref('')
+const mfaInput = ref<HTMLInputElement>()
+const passkeySupported = passkeys.supported()
+
 const rules = computed<FormRules>(() => ({
   username: [{ required: true, message: t('login.usernameRequired'), trigger: 'blur' }],
   password: [{ required: true, message: t('login.passwordRequired'), trigger: 'blur' }],
 }))
+
+function afterLogin() {
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : null
+  if (redirect) {
+    router.push(redirect)
+  } else {
+    router.push(auth.isStaff ? { name: 'admin-dashboard' } : { name: 'home' })
+  }
+}
 
 async function submit() {
   const valid = await formRef.value?.validate().catch(() => false)
   if (!valid) return
   loading.value = true
   try {
-    await auth.login(form.username, form.password)
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : null
-    if (redirect) {
-      router.push(redirect)
+    const needMfa = await auth.login(form.username, form.password)
+    if (needMfa) {
+      step.value = 'mfa'
+      await nextTick()
+      mfaInput.value?.focus()
     } else {
-      router.push(auth.isAdmin ? { name: 'admin-dashboard' } : { name: 'home' })
+      afterLogin()
     }
   } catch (error) {
     ElMessage.error(errorMessage(error))
+  } finally {
+    loading.value = false
+  }
+}
+
+async function submitMfa() {
+  if (!mfaCode.value.trim()) return
+  loading.value = true
+  try {
+    await auth.verifyMfa(mfaCode.value.trim())
+    afterLogin()
+  } catch (error) {
+    ElMessage.error(errorMessage(error))
+    mfaCode.value = ''
+  } finally {
+    loading.value = false
+  }
+}
+
+async function withPasskey() {
+  loading.value = true
+  try {
+    await auth.loginWithPasskey()
+    afterLogin()
+  } catch (error) {
+    if ((error as Error)?.name !== 'NotAllowedError') {
+      ElMessage.error(errorMessage(error))
+    }
   } finally {
     loading.value = false
   }
@@ -58,37 +102,69 @@ async function submit() {
         <LanguageSwitcher />
       </div>
       <div class="form-wrap">
-        <h2>{{ t('login.title') }}</h2>
-        <el-form
-          ref="formRef"
-          :model="form"
-          :rules="rules"
-          label-position="top"
-          size="large"
-          @keyup.enter="submit"
-        >
-          <el-form-item :label="t('login.username')" prop="username">
-            <el-input v-model="form.username" :prefix-icon="User" autocomplete="username" />
-          </el-form-item>
-          <el-form-item :label="t('login.password')" prop="password">
-            <el-input
-              v-model="form.password"
-              type="password"
-              show-password
-              :prefix-icon="Lock"
-              autocomplete="current-password"
-            />
-          </el-form-item>
-          <el-button
-            type="primary"
+        <template v-if="step === 'password'">
+          <h2>{{ t('login.title') }}</h2>
+          <el-form
+            ref="formRef"
+            :model="form"
+            :rules="rules"
+            label-position="top"
             size="large"
-            class="submit-btn"
-            :loading="loading"
-            @click="submit"
+            @keyup.enter="submit"
           >
-            {{ t('login.submit') }}
+            <el-form-item :label="t('login.username')" prop="username">
+              <el-input v-model="form.username" :prefix-icon="User" autocomplete="username webauthn" />
+            </el-form-item>
+            <el-form-item :label="t('login.password')" prop="password">
+              <el-input
+                v-model="form.password"
+                type="password"
+                show-password
+                :prefix-icon="Lock"
+                autocomplete="current-password"
+              />
+            </el-form-item>
+            <div class="aux-row">
+              <router-link :to="{ name: 'forgot-password' }" class="aux-link">
+                {{ t('login.forgot') }}
+              </router-link>
+            </div>
+            <el-button type="primary" size="large" class="submit-btn" :loading="loading" @click="submit">
+              {{ t('login.submit') }}
+            </el-button>
+            <el-divider v-if="passkeySupported" class="divider">{{ t('login.or') }}</el-divider>
+            <el-button
+              v-if="passkeySupported"
+              size="large"
+              class="submit-btn passkey-btn"
+              :icon="Key"
+              :loading="loading"
+              @click="withPasskey"
+            >
+              {{ t('login.passkey') }}
+            </el-button>
+          </el-form>
+        </template>
+
+        <template v-else>
+          <h2>{{ t('login.mfaTitle') }}</h2>
+          <p class="mfa-hint">{{ t('login.mfaHint') }}</p>
+          <el-input
+            ref="mfaInput"
+            v-model="mfaCode"
+            size="large"
+            maxlength="12"
+            class="mfa-input"
+            :placeholder="t('login.mfaPlaceholder')"
+            @keyup.enter="submitMfa"
+          />
+          <el-button type="primary" size="large" class="submit-btn mfa-btn" :loading="loading" @click="submitMfa">
+            {{ t('login.mfaSubmit') }}
           </el-button>
-        </el-form>
+          <el-button link class="back-link" @click="step = 'password'">
+            ← {{ t('common.cancel') }}
+          </el-button>
+        </template>
       </div>
     </main>
   </div>
@@ -167,9 +243,48 @@ async function submit() {
   font-weight: 600;
 }
 
+.aux-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -6px 0 14px;
+}
+
+.aux-link {
+  font-size: 13px;
+  color: var(--libris-primary);
+  text-decoration: none;
+}
+
 .submit-btn {
   width: 100%;
-  margin-top: 8px;
+}
+
+.divider {
+  margin: 18px 0;
+}
+
+.passkey-btn {
+  margin-left: 0;
+}
+
+.mfa-hint {
+  color: #6b7280;
+  font-size: 14px;
+  margin: -14px 0 20px;
+}
+
+.mfa-input :deep(input) {
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 6px;
+}
+
+.mfa-btn {
+  margin-top: 16px;
+}
+
+.back-link {
+  margin-top: 12px;
 }
 
 @media (max-width: 860px) {

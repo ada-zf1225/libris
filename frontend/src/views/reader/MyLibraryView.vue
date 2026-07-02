@@ -10,6 +10,7 @@ import {
   Star,
 } from '@element-plus/icons-vue'
 import { my, type Overview, type HoldView, type FavoriteView, type SuggestionView } from '@/api/my'
+import SecurityPanel from '@/components/SecurityPanel.vue'
 import type { LoanView, FineView } from '@/api/admin'
 import { apiChangePassword } from '@/api/auth'
 import { errorMessage } from '@/api/http'
@@ -379,6 +380,7 @@ const holdTagType = (status: HoldView['status']) =>
 
       <!-- settings -->
       <el-tab-pane :label="t('myLib.settings')" name="settings">
+        <SecurityPanel />
         <el-card shadow="never" class="settings-card">
           <h4>{{ t('myLib.settingsForm.changePassword') }}</h4>
           <el-form ref="pwdFormRef" :model="pwdForm" label-width="120px" class="pwd-form">

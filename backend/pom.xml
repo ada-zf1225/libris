@@ -49,6 +49,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <!-- Spring Security native WebAuthn (passkeys) delegates to webauthn4j -->
+        <dependency>
+            <groupId>com.webauthn4j</groupId>
+            <artifactId>webauthn4j-core</artifactId>
+            <version>0.29.7.RELEASE</version>
+        </dependency>
 
         <dependency>
             <groupId>org.flywaydb</groupId>

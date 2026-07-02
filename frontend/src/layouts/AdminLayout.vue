@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import {
   ArrowDown,
+  Avatar,
   DataAnalysis,
   Collection,
   User,
@@ -39,33 +40,37 @@ async function handleCommand(command: string) {
         <span class="brand-tag">Staff</span>
       </div>
       <el-menu :default-active="activeMenu" router class="side-menu">
-        <el-menu-item index="/admin">
+        <el-menu-item v-if="auth.hasPermission('VIEW_STATS')" index="/admin">
           <el-icon><DataAnalysis /></el-icon>
           <span>{{ t('nav.admin.dashboard') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/circulation">
+        <el-menu-item v-if="auth.hasPermission('CIRCULATION')" index="/admin/circulation">
           <el-icon><Refresh /></el-icon>
           <span>{{ t('nav.admin.circulation') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/books">
+        <el-menu-item v-if="auth.hasPermission('MANAGE_CATALOG')" index="/admin/books">
           <el-icon><Collection /></el-icon>
           <span>{{ t('nav.admin.books') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/readers">
+        <el-menu-item v-if="auth.hasPermission('MANAGE_READERS')" index="/admin/readers">
           <el-icon><User /></el-icon>
           <span>{{ t('nav.admin.readers') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/policies">
+        <el-menu-item v-if="auth.hasPermission('MANAGE_POLICIES')" index="/admin/policies">
           <el-icon><SetUp /></el-icon>
           <span>{{ t('nav.admin.policies') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/suggestions">
+        <el-menu-item v-if="auth.hasPermission('MANAGE_SUGGESTIONS')" index="/admin/suggestions">
           <el-icon><ShoppingCart /></el-icon>
           <span>{{ t('nav.admin.suggestions') }}</span>
         </el-menu-item>
-        <el-menu-item index="/admin/logs">
+        <el-menu-item v-if="auth.hasPermission('VIEW_LOGS')" index="/admin/logs">
           <el-icon><Document /></el-icon>
           <span>{{ t('nav.admin.logs') }}</span>
+        </el-menu-item>
+        <el-menu-item v-if="auth.isSuperAdmin" index="/admin/staff">
+          <el-icon><Avatar /></el-icon>
+          <span>{{ t('nav.admin.staff') }}</span>
         </el-menu-item>
       </el-menu>
     </el-aside>

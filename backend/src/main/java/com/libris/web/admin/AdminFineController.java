@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_CIRCULATION')")
 @RestController
 @RequestMapping("/api/admin/fines")
 @RequiredArgsConstructor

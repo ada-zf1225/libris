@@ -1,5 +1,7 @@
 package com.libris.web.auth;
 
+import java.util.List;
+
 public record MeResponse(
         Long id,
         String username,
@@ -8,5 +10,9 @@ public record MeResponse(
         String status,
         String email,
         String preferredLocale,
-        String readerType) {
+        String readerType,
+        List<String> permissions,
+        boolean emailVerified,
+        boolean mfaEnabled,
+        int passkeyCount) {
 }
