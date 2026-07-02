@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpMessageConverterAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -32,6 +34,12 @@ import java.io.IOException;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Value("${libris.webauthn.rp-id:localhost}")
+    private String rpId;
+
+    @Value("${libris.webauthn.allowed-origins:http://localhost:5173,http://localhost:8081,http://localhost:8080}")
+    private String[] allowedOrigins;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -39,11 +47,19 @@ public class SecurityConfig {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .webAuthn(webauthn -> webauthn
+                .rpName("Libris")
+                .rpId(rpId)
+                .allowedOrigins(allowedOrigins))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/mfa/verify",
+                        "/api/auth/forgot-password", "/api/auth/reset-password",
+                        "/api/auth/verify-email").permitAll()
+                .requestMatchers("/webauthn/authenticate/options", "/login/webauthn").permitAll()
                 .requestMatchers("/actuator/health/**", "/actuator/health").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/staff/**", "/api/admin/auth-events/**").hasRole("SUPER_ADMIN")
+                .requestMatchers("/api/admin/**").hasAnyRole("SUPER_ADMIN", "LIBRARIAN")
                 .anyRequest().authenticated())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -91,10 +107,7 @@ public class SecurityConfig {
             .formatted(status.getReasonPhrase(), status.value(), detail));
     }
 
-    /**
-     * Resolves the deferred CSRF token on every request so that the
-     * XSRF-TOKEN cookie is always available to the SPA.
-     */
+    /** Resolves the deferred CSRF token so the XSRF-TOKEN cookie is always present. */
     static final class CsrfCookieFilter extends OncePerRequestFilter {
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)

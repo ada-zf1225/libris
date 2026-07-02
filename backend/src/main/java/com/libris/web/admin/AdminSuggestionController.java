@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_MANAGE_SUGGESTIONS')")
 @RestController
 @RequestMapping("/api/admin/suggestions")
 @RequiredArgsConstructor

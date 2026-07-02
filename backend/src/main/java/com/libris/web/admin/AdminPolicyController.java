@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@org.springframework.security.access.prepost.PreAuthorize("hasAuthority('PERM_MANAGE_POLICIES')")
 @RestController
 @RequestMapping("/api/admin/policies")
 @RequiredArgsConstructor
