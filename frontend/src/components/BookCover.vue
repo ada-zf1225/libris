@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{ src: string | null; title: string }>()
 const failed = ref(false)
+const loaded = ref(false)
 
 function initial(): string {
   return props.title ? props.title.charAt(0) : '书'
@@ -16,6 +17,8 @@ function initial(): string {
       :src="src"
       :alt="title"
       loading="lazy"
+      :class="{ loaded }"
+      @load="loaded = true"
       @error="failed = true"
     />
     <div v-else class="fallback">
@@ -36,6 +39,14 @@ function initial(): string {
   height: 100%;
   object-fit: cover;
   display: block;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.45s ease, transform 0.6s ease;
+}
+
+.cover img.loaded {
+  opacity: 1;
+  transform: none;
 }
 
 .fallback {

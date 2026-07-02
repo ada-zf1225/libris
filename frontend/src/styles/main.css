@@ -4,8 +4,19 @@
   --libris-primary-light: #1f5a94;
   --libris-accent: #d4003b;
   --libris-bg: #f5f7fa;
+  --libris-card-border: #e8ebf0;
 
   --el-color-primary: var(--libris-primary);
+}
+
+html.dark {
+  --libris-primary: #6ea8dc;
+  --libris-primary-light: #8dbce6;
+  --libris-bg: #101418;
+  --libris-card-border: #2a3138;
+
+  --el-color-primary: #6ea8dc;
+  color-scheme: dark;
 }
 
 * {
@@ -31,10 +42,125 @@ body {
   background: var(--libris-bg);
   color: #1f2329;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease;
+}
+
+html.dark body {
+  color: #d6dde4;
 }
 
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
+}
+
+/* ---------- motion system ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* route transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* staggered list entrance — apply .stagger-in to repeated cards */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stagger-in {
+  opacity: 0;
+  animation: rise-in 0.45s cubic-bezier(0.22, 0.9, 0.32, 1) forwards;
+}
+
+.stagger-in:nth-child(1) { animation-delay: 0.02s; }
+.stagger-in:nth-child(2) { animation-delay: 0.06s; }
+.stagger-in:nth-child(3) { animation-delay: 0.1s; }
+.stagger-in:nth-child(4) { animation-delay: 0.14s; }
+.stagger-in:nth-child(5) { animation-delay: 0.18s; }
+.stagger-in:nth-child(6) { animation-delay: 0.22s; }
+.stagger-in:nth-child(7) { animation-delay: 0.26s; }
+.stagger-in:nth-child(8) { animation-delay: 0.3s; }
+.stagger-in:nth-child(9) { animation-delay: 0.34s; }
+.stagger-in:nth-child(10) { animation-delay: 0.38s; }
+.stagger-in:nth-child(n + 11) { animation-delay: 0.42s; }
+
+/* hero entrance */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-in {
+  animation: hero-in 0.6s cubic-bezier(0.22, 0.9, 0.32, 1) both;
+}
+
+.hero-in-late {
+  animation: hero-in 0.6s cubic-bezier(0.22, 0.9, 0.32, 1) 0.15s both;
+}
+
+/* search focus glow */
+.glow-focus .el-input__wrapper.is-focus,
+.glow-focus .el-input__wrapper:focus-within {
+  box-shadow:
+    0 0 0 1px var(--el-color-primary) inset,
+    0 0 0 4px rgba(0, 62, 116, 0.14),
+    0 8px 24px rgba(0, 42, 82, 0.18) !important;
+  transition: box-shadow 0.25s ease;
+}
+
+html.dark .glow-focus .el-input__wrapper.is-focus {
+  box-shadow:
+    0 0 0 1px var(--el-color-primary) inset,
+    0 0 0 4px rgba(110, 168, 220, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* subtle scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }

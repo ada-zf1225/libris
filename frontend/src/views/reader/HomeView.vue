@@ -27,14 +27,14 @@ onMounted(async () => {
 <template>
   <div>
     <section class="hero">
-      <h1>{{ t('brand.name') }} · {{ t('brand.library') }}</h1>
+      <h1 class="hero-in">{{ t('brand.name') }} · {{ t('brand.library') }}</h1>
       <p class="hero-tagline">{{ t('brand.tagline') }}</p>
       <el-input
         v-model="q"
         :placeholder="t('search.placeholder')"
         :prefix-icon="Search"
         size="large"
-        class="hero-search"
+        class="hero-search hero-in-late glow-focus"
         @keyup.enter="go"
       >
         <template #append>
@@ -49,7 +49,7 @@ onMounted(async () => {
           v-for="book in featured"
           :key="book.id"
           :to="{ name: 'book-detail', params: { id: book.id } }"
-          class="shelf-card"
+          class="shelf-card stagger-in"
         >
           <BookCover :src="book.coverUrl" :title="book.title" class="shelf-cover" />
           <p class="shelf-name">{{ book.title }}</p>

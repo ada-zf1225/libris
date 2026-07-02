@@ -6,7 +6,9 @@ import { i18n } from './i18n'
 import { setUnauthorizedHandler } from './api/http'
 import { useAuthStore } from './stores/auth'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import './styles/main.css'
+import './composables/theme'
 
 const app = createApp(App)
 
