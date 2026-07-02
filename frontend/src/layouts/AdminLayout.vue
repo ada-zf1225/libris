@@ -14,6 +14,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -73,6 +74,7 @@ async function handleCommand(command: string) {
       <el-header class="admin-header">
         <div />
         <div class="header-actions">
+          <NotificationBell />
           <LanguageSwitcher />
           <el-dropdown v-if="auth.user" trigger="click" @command="handleCommand">
             <span class="user-trigger">
